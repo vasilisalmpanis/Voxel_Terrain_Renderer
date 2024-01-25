@@ -16,6 +16,8 @@ target_link_libraries(TerrainGenerator PRIVATE glfw)
 
 # Include the directories for GLFW headers
 target_include_directories(TerrainGenerator PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/glad)
+target_include_directories(TerrainGenerator PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(include)
 target_include_directories(TerrainGenerator PRIVATE ${GLFW_INCLUDE_DIRS})
 
 # Set C++ standard to C++11
