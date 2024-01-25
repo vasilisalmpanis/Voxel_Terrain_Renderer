@@ -1,0 +1,3 @@
+/home/wrottger/Voxel_Terrain_Renderer/build/CMakeFiles/TerrainGenerator.dir
+/home/wrottger/Voxel_Terrain_Renderer/build/CMakeFiles/edit_cache.dir
+/home/wrottger/Voxel_Terrain_Renderer/build/CMakeFiles/rebuild_cache.dir
