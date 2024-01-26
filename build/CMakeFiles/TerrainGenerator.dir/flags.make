@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/wrottger/Voxel_Terrain_Renderer/include -I/home/wrottger/Voxel_Terrain_Renderer/include/KHR -I/home/wrottger/Voxel_Terrain_Renderer/SYSTEM -I/home/wrottger/Voxel_Terrain_Renderer/glad
 
-CXX_FLAGS = 
+CXX_FLAGS = -g
 

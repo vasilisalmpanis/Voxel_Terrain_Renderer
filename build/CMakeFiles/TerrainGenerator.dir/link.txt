@@ -1,1 +1,1 @@
-/usr/bin/c++ CMakeFiles/TerrainGenerator.dir/src/main.cpp.o -o TerrainGenerator  /usr/lib/x86_64-linux-gnu/libglfw.so.3.3 -lGLESv2 
+/usr/bin/c++ -g CMakeFiles/TerrainGenerator.dir/src/main.cpp.o -o TerrainGenerator  /usr/lib/x86_64-linux-gnu/libglfw.so.3.3 -lGLESv2 
