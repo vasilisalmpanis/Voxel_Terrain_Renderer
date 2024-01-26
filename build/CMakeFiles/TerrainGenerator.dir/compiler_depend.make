@@ -187,8 +187,28 @@ CMakeFiles/TerrainGenerator.dir/src/main.cpp.o: ../src/main.cpp \
   /usr/include/c++/12/bits/ostream.tcc \
   /usr/include/c++/12/istream \
   /usr/include/c++/12/bits/istream.tcc \
-  /usr/include/GLFW/glfw3.h
+  /usr/include/GLFW/glfw3.h \
+  /usr/include/c++/12/math.h \
+  /usr/include/c++/12/cmath \
+  /usr/include/math.h \
+  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
+  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
+  /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
+  /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
+  /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
+  /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
+  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h \
+  /usr/include/x86_64-linux-gnu/bits/iscanonical.h
 
+
+/usr/include/x86_64-linux-gnu/bits/iscanonical.h:
+
+/usr/include/x86_64-linux-gnu/bits/fp-fast.h:
+
+/usr/include/x86_64-linux-gnu/bits/flt-eval-method.h:
+
+/usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h:
 
 /usr/include/c++/12/bits/basic_ios.tcc:
 
@@ -209,6 +229,8 @@ CMakeFiles/TerrainGenerator.dir/src/main.cpp.o: ../src/main.cpp \
 /usr/include/c++/12/bits/basic_string.tcc:
 
 /usr/include/c++/12/bits/charconv.h:
+
+/usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/error_t.h:
 
@@ -314,6 +336,8 @@ CMakeFiles/TerrainGenerator.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/c++/12/ios:
 
+/usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
+
 /usr/include/c++/12/bits/memoryfwd.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
@@ -406,6 +430,8 @@ CMakeFiles/TerrainGenerator.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/c++/12/new:
 
+/usr/include/x86_64-linux-gnu/bits/fp-logb.h:
+
 /usr/include/c++/12/exception:
 
 /usr/include/c++/12/bits/std_abs.h:
@@ -416,13 +442,19 @@ CMakeFiles/TerrainGenerator.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
 
+/usr/include/x86_64-linux-gnu/bits/math-vector.h:
+
 /usr/include/c++/12/bits/stl_pair.h:
+
+/usr/include/c++/12/cmath:
 
 /usr/include/features.h:
 
 /usr/include/x86_64-linux-gnu/c++/12/bits/os_defines.h:
 
 /usr/include/c++/12/ostream:
+
+/usr/include/x86_64-linux-gnu/bits/mathcalls.h:
 
 /usr/include/c++/12/cstdint:
 
@@ -508,6 +540,8 @@ CMakeFiles/TerrainGenerator.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/struct_mutex.h:
 
+/usr/include/c++/12/math.h:
+
 /usr/include/c++/12/ext/atomicity.h:
 
 /usr/include/x86_64-linux-gnu/c++/12/bits/atomic_word.h:
@@ -553,6 +587,8 @@ CMakeFiles/TerrainGenerator.dir/src/main.cpp.o: ../src/main.cpp \
 /usr/include/c++/12/debug/debug.h:
 
 /usr/include/c++/12/bits/stl_function.h:
+
+/usr/include/math.h:
 
 /usr/include/c++/12/ext/numeric_traits.h:
 
