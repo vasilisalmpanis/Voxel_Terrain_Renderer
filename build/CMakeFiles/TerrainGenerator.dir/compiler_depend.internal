@@ -189,6 +189,7 @@ CMakeFiles/TerrainGenerator.dir/src/main.cpp.o
  /usr/include/c++/12/istream
  /usr/include/c++/12/bits/istream.tcc
  /usr/include/GLFW/glfw3.h
+<<<<<<< HEAD
  /usr/include/c++/12/math.h
  /usr/include/c++/12/cmath
  /usr/include/math.h
@@ -201,4 +202,6 @@ CMakeFiles/TerrainGenerator.dir/src/main.cpp.o
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h
  /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h
  /usr/include/x86_64-linux-gnu/bits/iscanonical.h
+=======
+>>>>>>> ded298412c1c0d8ecf34ef31a4887ddd099fa37a
 
