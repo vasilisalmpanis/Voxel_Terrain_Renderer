@@ -1,10 +1,10 @@
+#include <GLES2/gl2.h>
+#include <EGL/egl.h>
 #include <iostream>
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <math.h>
 
 
-// Vertex Shader source code
 int main()
 {
 glfwInit();
