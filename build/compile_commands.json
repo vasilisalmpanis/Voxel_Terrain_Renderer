@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/wrottger/Voxel_Terrain_Renderer/build",
-  "command": "/usr/bin/c++  -I/home/wrottger/Voxel_Terrain_Renderer/include -I/home/wrottger/Voxel_Terrain_Renderer/include/KHR -I/home/wrottger/Voxel_Terrain_Renderer/SYSTEM -I/home/wrottger/Voxel_Terrain_Renderer/glad -g -o CMakeFiles/TerrainGenerator.dir/src/main.cpp.o -c /home/wrottger/Voxel_Terrain_Renderer/src/main.cpp",
-  "file": "/home/wrottger/Voxel_Terrain_Renderer/src/main.cpp"
-}
-]
