@@ -43,6 +43,13 @@ const char *fragmentShaderSource = "#version 330 core\n"
 " FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
 "}\0";
 
+const char *fragmentShaderSource2 = "#version 330 core\n"
+"out vec4 FragColor;\n"
+"void main()\n"
+"{\n"
+" FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
+"}\0";
+
 GLuint create_shaders()
 {
 	// vertex shader
@@ -57,6 +64,39 @@ GLuint create_shaders()
 	GLuint fragmentShader;
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
+	if (!shaderCompilationStatus(fragmentShader))
+		return -1;
+	
+	// shader program
+	GLuint shaderProgram;
+	shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
+	//TODO check link error
+
+	glUseProgram(shaderProgram);
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+	return shaderProgram;
+}
+
+
+GLuint create_yellow_shaders()
+{
+	// vertex shader
+	GLuint vertexShader;
+	vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glCompileShader(vertexShader);
+	if (!shaderCompilationStatus(vertexShader))
+		return -1;
+
+	// fragment shader
+	GLuint fragmentShader;
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource2, NULL);
 	glCompileShader(fragmentShader);
 	if (!shaderCompilationStatus(fragmentShader))
 		return -1;
@@ -121,6 +161,9 @@ int main()
 	if (shaderProgram == -1)
 		return -1;
 
+	GLuint yellowShader = create_yellow_shaders();
+	if (shaderProgram == -1)
+		return -1;
 
 	unsigned int VAO;
 	glGenVertexArrays(1, &VAO);
@@ -159,7 +202,7 @@ int main()
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	while(!glfwWindowShouldClose(window))
 	{
 		// input
@@ -173,6 +216,7 @@ int main()
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glBindVertexArray(0);
 
+		glUseProgram(yellowShader);
 		glBindVertexArray(VAO1);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glBindVertexArray(0);
