@@ -1,31 +1,23 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <fstream>
+#include <sstream>
 #include <math.h>
 
-
-// Vertex Shader source code
-const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
-//Fragment Shader source code
-const char* fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(0.8f, 0.3f, 0.02f, 1.0f);\n"
-"}\n\0";
-
-const char* fragmentShaderSource2 = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(0.2f, 0.8f, 0.5f, 1.0f); // Change the color values here\n"
-"}\n\0";
-
+std::string readShader(std::string file_name)
+{
+	std::ifstream shader_file;
+	shader_file.open(file_name);
+	if (!shader_file.is_open() && !shader_file.good())
+	{
+		std::cout << "Failed to open file: " << file_name << std::endl;
+		return NULL;
+	}
+	std::stringstream shader_code;
+	shader_code << shader_file.rdbuf();
+	return shader_code.str();
+}
 
 void processInput(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -98,14 +90,24 @@ int main()
 	// Specify the viewport of OpenGL in the window
 	// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
 	glViewport(0, 0, 800, 800);
+	std::string vertexShaderSource = readShader("../shaders/default.vert");
+	std::string fragmentShaderSource = readShader("../shaders/default.frag");
+	std::string fragmentShaderSource2 = readShader("../shaders/second.frag");
+	std::cout << vertexShaderSource;
+	std::cout << fragmentShaderSource;
+	if (vertexShaderSource.empty() || fragmentShaderSource.empty())
+	{
+		std::cout << "Failed to read shader files" << std::endl;
+		return 1;
+	}
 
 	// Create and compile the vertex shader and get its reference
-	GLuint vertexShader = createShader(vertexShaderSource, GL_VERTEX_SHADER);
+	GLuint vertexShader = createShader(vertexShaderSource.c_str(), GL_VERTEX_SHADER);
 
 	// Create fragment shader object and get its reference
 	GLuint fragmentShader[2];
-	fragmentShader[0] = createShader(fragmentShaderSource, GL_FRAGMENT_SHADER);
-	fragmentShader[1] = createShader(fragmentShaderSource2, GL_FRAGMENT_SHADER);
+	fragmentShader[0] = createShader(fragmentShaderSource.c_str(), GL_FRAGMENT_SHADER);
+	fragmentShader[1] = createShader(fragmentShaderSource2.c_str(), GL_FRAGMENT_SHADER);
 	// Create shader program object and get its reference
 	GLuint shaderProgram = glCreateProgram();
 	GLuint shaderProgram2 = glCreateProgram();
@@ -202,12 +204,18 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 		// Tell OpenGL which Shader Program we want to use
 		glUseProgram(shaderProgram2);
+		float timeValue = glfwGetTime();
+		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+		int vertexColorLocation = glGetUniformLocation(shaderProgram, "myColor");
+		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 		// Bind the VAO so OpenGL knows to use it
 		glBindVertexArray(VAO1);
 		// Draw the triangle using the GL_TRIANGLES primitive
 		// glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glUseProgram(shaderProgram);
+		vertexColorLocation = glGetUniformLocation(shaderProgram, "myColor");
+		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 		glBindVertexArray(VAO2);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		// Swap the back buffer with the front buffer
