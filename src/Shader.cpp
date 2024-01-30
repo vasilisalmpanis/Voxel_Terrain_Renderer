@@ -1,6 +1,6 @@
 #include <includes/Shader.hpp>
 
-Shader::Shader(std::string vertexFileName, std::string fragmentFileName) : _ID(0)
+Shader::Shader(std::string vertexFileName, std::string fragmentFileName) : m_ID(0)
 {
 	std::string vertexShaderSource = readFile(vertexFileName);
 	std::string fragmentShaderSource = readFile(fragmentFileName);
@@ -11,15 +11,15 @@ Shader::Shader(std::string vertexFileName, std::string fragmentFileName) : _ID(0
 	}
 	GLuint vertexShader = createShader(vertexShaderSource.c_str(), GL_VERTEX_SHADER);
 	GLuint fragmentShader = createShader(fragmentShaderSource.c_str(), GL_FRAGMENT_SHADER);
-    _ID = glCreateProgram();
-    glAttachShader(_ID, vertexShader);
-    glAttachShader(_ID, fragmentShader);
-    glLinkProgram(_ID);
+    m_ID = glCreateProgram();
+    glAttachShader(m_ID, vertexShader);
+    glAttachShader(m_ID, fragmentShader);
+    glLinkProgram(m_ID);
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 }
 
-Shader::Shader(const Shader &other) : _ID(0)
+Shader::Shader(const Shader &other) : m_ID(0)
 {
     *this = other;
 }
@@ -27,7 +27,7 @@ Shader::Shader(const Shader &other) : _ID(0)
 Shader &Shader::operator=(const Shader &other)
 {
     if (this != &other)
-        _ID = other._ID;
+        m_ID = other.m_ID;
     return (*this);
 }
 
@@ -72,23 +72,23 @@ GLuint Shader::createShader(const char *shaderSource, GLenum shaderType)
 
 unsigned int Shader::getID(void) const
 {
-    return _ID;
+    return m_ID;
 }
 
 // Setters
 void Shader::setBool(const std::string &name, bool value) const
 {
-    glUniform1i(glGetUniformLocation(_ID, name.c_str()), (int)value);
+    glUniform1i(glGetUniformLocation(m_ID, name.c_str()), (int)value);
 }
 
 void Shader::setInt(const std::string &name, int value) const
 {
-    glUniform1i(glGetUniformLocation(_ID, name.c_str()), value);
+    glUniform1i(glGetUniformLocation(m_ID, name.c_str()), value);
 }
 
 void Shader::setFloat(const std::string &name, float value) const
 {
-    glUniform1f(glGetUniformLocation(_ID, name.c_str()), (int)value);
+    glUniform1f(glGetUniformLocation(m_ID, name.c_str()), value);
 }
 
 
@@ -96,10 +96,10 @@ void Shader::setFloat(const std::string &name, float value) const
 
 void Shader::use(void) const 
 {
-    glUseProgram(_ID);
+    glUseProgram(m_ID);
 }
 
 void Shader::del(void) const
 {
-    glDeleteProgram(_ID);
+    glDeleteProgram(m_ID);
 }
