@@ -2,6 +2,7 @@
 #define TEXTURE_HPP
 # include "Shader.hpp"
 # include <glad/glad.h>
+
 # include <iostream>
 
 class Texture {

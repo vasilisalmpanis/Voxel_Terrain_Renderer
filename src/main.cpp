@@ -66,27 +66,25 @@ int main()
 	// Create shader program from files
 	// Shader firstProgram("../shaders/default.vert", "../shaders/boxshader.frag");
 	Shader secondProgram("../shaders/boxshader.vert", "../shaders/boxshader.frag");
-	Texture texture1("../textures/wooden_container.jpg", GL_RGB);
+	Texture texture1("../textures/wood.jpg", GL_RGB);
 	Texture texture2("../textures/awesomeface.png", GL_RGBA);
 	GLfloat triangle1[] =
 	{
-		0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,   // Top right corner
-		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // Lower right corner
-		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // Lower left corner
-		-0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f  // Top left corner
+		0.5f,  0.5f, 0.0f,   1.0f, 1.0f,   // Top right corner
+		0.5f, -0.5f, 0.0f,   1.0f, 0.0f,  // Lower right corner
+	   -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // Lower left corner
+	   -0.5f,  0.5f, 0.0f,   0.0f, 1.0f  // Top left corner
 	};
 	
 	GLuint indices[] = {
 		0, 1, 3, // first triangle
 		1, 2, 3  // second triangle
 	};
-	
-	GLfloat textureCoordinates[] = {
-		0.0f, 0.0f, // Bottom left
-		1.0f, 0.0f, // Bottom right
-		0.5f, 1.0f  // Middle Top
-	};
 
+	glm::mat4 trans = glm::mat4(1.0f);
+	trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+	trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+	
 	// Create reference containers for the Vartex Array Object and the Vertex Buffer Object
 	GLuint VBO1, VAO1, EBO;
 
@@ -110,15 +108,12 @@ int main()
 	// dynamic means modiefied multiple times and used many many times
 
 	// Configure the Vertex Attribute so that OpenGL knows how to read the VBO
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 *sizeof(float), (void *)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 *sizeof(float), (void *)0);
 	// Enable the vertex attribute so that OpenGL knows to use it
 	glEnableVertexAttribArray(0);
 
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
 	
 	// Bind both the VBO and VAO to 0 so that we don't accidentally modify the VAO and VBO we created
 	glBindVertexArray(0);
@@ -145,8 +140,9 @@ int main()
 	// Tell glfw that we want to reset the viewport every time a user resizes the window
 	// texture2.bind(1);
 	glUseProgram(secondProgram.getID());
-	secondProgram.setInt("boxTexture", 0);
-	secondProgram.setInt("extraTexture", 1);
+    secondProgram.setInt("texture1", 0);
+    secondProgram.setInt("texture2", 1);
+	// secondProgram.setInt("extraTexture", 1);
 	// secondProgram.setInt("boxTexture", 0);
 	// secondProgram.setInt("extraTexture", 1);
 	glfwSetFramebufferSizeCallback(window, frameBufferSizeCallback);
@@ -165,9 +161,20 @@ int main()
 		// // Draw the triangle using the GL_TRIANGLES primitive
 		// // glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
 		// glDrawArrays(GL_TRIANGLES, 0, 3);
+
+
+		// Create Transformations
+        glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+        transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+        transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
 		texture1.bind(0);
 		texture2.bind(1);
 		secondProgram.use();
+        unsigned int transformLoc = glGetUniformLocation(secondProgram.getID(), "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+		// secondProgram.setMatrix4fv("transform", trans);
+		// secondProgram.setFloat("mixValue", 0.4f);
 		glBindVertexArray(VAO1);
 		glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
 		// glDrawArrays(GL_TRIANGLES, 0, 3);
