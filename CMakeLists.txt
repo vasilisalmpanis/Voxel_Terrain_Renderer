@@ -5,6 +5,7 @@ project(TerrainGenerator)
 set(SOURCES
     src/main.cpp
     src/glad.c
+    src/Shader.cpp
 )
 
 # Add the executable
