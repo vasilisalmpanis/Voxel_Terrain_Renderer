@@ -2,6 +2,9 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
 #include <math.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "Shader.hpp"
@@ -131,23 +134,40 @@ int main()
 	shader.use();
 	glUniform1i(glGetUniformLocation(shader.ID, "texture1"), 0);
 	shader.setInt("texture2", 1);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, texture1);
 	while(!glfwWindowShouldClose(window))
 	{
 		// input
 		processInput(window, shader);
 		shader.use();
+
 		// render
 		glClearColor(0.2f, 0.3f, 0.3f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture1);
+		// transform
+		glm::mat4 trans = glm::mat4(1.0f);
+		trans = glm::scale(trans, glm::vec3(sin(glfwGetTime()), sin(glfwGetTime()), sin(glfwGetTime())));
+		unsigned int transformLoc = glGetUniformLocation(shader.ID,"transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
+
+		// trans2form
+		glm::mat4 trans2 = glm::mat4(1.0f);
+		trans2 = glm::rotate(trans2, (float)glfwGetTime(),
+		glm::vec3(0.0f, 0.0f, 1.0f));
+		trans2 = glm::translate(trans2, glm::vec3(0.5f, -0.7f, 0.0f));
+		unsigned int trans2formLoc = glGetUniformLocation(shader.ID,"transform");
+		glUniformMatrix4fv(trans2formLoc, 1, GL_FALSE, glm::value_ptr(trans2));
+
+		glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		// check and call events and swap the buffers
 		glfwPollEvents();
