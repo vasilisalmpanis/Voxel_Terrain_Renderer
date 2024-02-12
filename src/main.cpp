@@ -61,13 +61,14 @@ int main()
 	
 	// Specify the viewport of OpenGL in the window
 	// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
-	glViewport(0, 0, 800, 600);
+	glViewport(0, 0, 800, 800);
 
 	// Create shader program from files
 	// Shader firstProgram("../shaders/default.vert", "../shaders/boxshader.frag");
 	Shader secondProgram("../shaders/boxshader.vert", "../shaders/boxshader.frag");
 	Texture texture1("../textures/wood.jpg", GL_RGB);
-	Texture texture2("../textures/awesomeface.png", GL_RGBA);
+	Texture texture2("../textures/shrek.png", GL_RGBA);
+	Texture texture3("../textures/awesomeface.png", GL_RGBA);
 
 
 
@@ -115,6 +116,19 @@ int main()
         -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
+
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
 	
 	GLuint indices[] = {
 		0, 1, 3, // first triangle
@@ -184,38 +198,53 @@ int main()
 	glfwSetFramebufferSizeCallback(window, frameBufferSizeCallback);
 	glEnable(GL_DEPTH_TEST);
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	while (!glfwWindowShouldClose(window)) {
-	    	processInput(window);
+	int i = 0;
+	while (!glfwWindowShouldClose(window)) 
+	{
+		// Input
+	    processInput(window);
+
 		// Specify the color of the background
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
 		// Clean the back buffer and assign the new color to it
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		// Tell OpenGL which Shader Program we want to use
-		// glUseProgram(firstProgram.getID());
-		// // Bind the VAO so OpenGL knows to use it
-		// glBindVertexArray(VAO2);
-		// // Draw the triangle using the GL_TRIANGLES primitive
-		// // glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
-		// glDrawArrays(GL_TRIANGLES, 0, 3);
 
-		glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-		model = glm::rotate(model, static_cast<float>(glfwGetTime()) * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-
+		// View matrix
 		glm::mat4 view = glm::mat4(1.0f);
 		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
+		// Projection matrix
 		glm::mat4 projection = glm::mat4(1.0f);
-		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-		// Create Transformations
+		projection = glm::perspective(glm::radians(50.0f), 800.0f / 800.0f, 0.1f, 100.0f);
+
+		// Bind textures
 		texture1.bind(0);
-		texture2.bind(1);
+
+
+		// Use the shader program
 		secondProgram.use();
-		secondProgram.setMatrix4fv("model", model);
+
+		// Bind the VAO
+		glBindVertexArray(VAO1);
+
+		// Set uniforms
 		secondProgram.setMatrix4fv("view", view);
 		secondProgram.setMatrix4fv("projection", projection);
-		glBindVertexArray(VAO1);
-		// glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		for (int i = 0; i < 10; i++)
+		{
+			if (i % 4)
+				texture2.bind(1);
+			else
+				texture3.bind(1);
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, cubePositions[i]);
+			float angle = 20.0f * i;
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			secondProgram.setMatrix4fv("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
 		// Take care of all GLFW events
