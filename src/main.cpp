@@ -61,29 +61,65 @@ int main()
 	
 	// Specify the viewport of OpenGL in the window
 	// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
-	glViewport(0, 0, 800, 800);
+	glViewport(0, 0, 800, 600);
 
 	// Create shader program from files
 	// Shader firstProgram("../shaders/default.vert", "../shaders/boxshader.frag");
 	Shader secondProgram("../shaders/boxshader.vert", "../shaders/boxshader.frag");
 	Texture texture1("../textures/wood.jpg", GL_RGB);
 	Texture texture2("../textures/awesomeface.png", GL_RGBA);
-	GLfloat triangle1[] =
-	{
-		0.5f,  0.5f, 0.0f,   1.0f, 1.0f,   // Top right corner
-		0.5f, -0.5f, 0.0f,   1.0f, 0.0f,  // Lower right corner
-	   -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // Lower left corner
-	   -0.5f,  0.5f, 0.0f,   0.0f, 1.0f  // Top left corner
-	};
+
+
+
+
+    float triangle1[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    };
 	
 	GLuint indices[] = {
 		0, 1, 3, // first triangle
 		1, 2, 3  // second triangle
 	};
-
-	glm::mat4 trans = glm::mat4(1.0f);
-	trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-	trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
 	
 	// Create reference containers for the Vartex Array Object and the Vertex Buffer Object
 	GLuint VBO1, VAO1, EBO;
@@ -91,7 +127,7 @@ int main()
 	// Generate VAO before VBO
 	glGenVertexArrays(1, &VAO1);
 	glGenBuffers(1, &VBO1);
-	glGenBuffers(1, &EBO);
+	// glGenBuffers(1, &EBO);
 
 	// Make the VAO the current Vertex Array Object by binding it
 	glBindVertexArray(VAO1);
@@ -101,8 +137,8 @@ int main()
 
 	// Introduce the vertices into the VBO
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle1), triangle1, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	// glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	// stream means modiefied once and used many times
 	// static means modiefied once and used many many times
 	// dynamic means modiefied multiple times and used many many times
@@ -146,14 +182,14 @@ int main()
 	// secondProgram.setInt("boxTexture", 0);
 	// secondProgram.setInt("extraTexture", 1);
 	glfwSetFramebufferSizeCallback(window, frameBufferSizeCallback);
-	
+	glEnable(GL_DEPTH_TEST);
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	while (!glfwWindowShouldClose(window)) {
 	    	processInput(window);
 		// Specify the color of the background
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		// Clean the back buffer and assign the new color to it
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Tell OpenGL which Shader Program we want to use
 		// glUseProgram(firstProgram.getID());
 		// // Bind the VAO so OpenGL knows to use it
@@ -162,22 +198,24 @@ int main()
 		// // glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
 		// glDrawArrays(GL_TRIANGLES, 0, 3);
 
+		glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+		model = glm::rotate(model, static_cast<float>(glfwGetTime()) * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 
+		glm::mat4 view = glm::mat4(1.0f);
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+		glm::mat4 projection = glm::mat4(1.0f);
+		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 		// Create Transformations
-        glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-        transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-        transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-
 		texture1.bind(0);
 		texture2.bind(1);
 		secondProgram.use();
-        unsigned int transformLoc = glGetUniformLocation(secondProgram.getID(), "transform");
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
-		// secondProgram.setMatrix4fv("transform", trans);
-		// secondProgram.setFloat("mixValue", 0.4f);
+		secondProgram.setMatrix4fv("model", model);
+		secondProgram.setMatrix4fv("view", view);
+		secondProgram.setMatrix4fv("projection", projection);
 		glBindVertexArray(VAO1);
-		glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
-		// glDrawArrays(GL_TRIANGLES, 0, 3);
+		// glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
 		// Take care of all GLFW events

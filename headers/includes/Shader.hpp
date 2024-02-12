@@ -24,7 +24,7 @@ public:
     void            setBool(const std::string &name, bool value) const;
     void            setInt(const std::string &name, int value) const;
     void            setFloat(const std::string &name, float value) const;
-    void            setMatrix4fv(const std::string &name, glm::mat4) const;
+    void            setMatrix4fv(const char *name, glm::mat4) const;
 
     void            use(void) const;
     void            del(void) const;
