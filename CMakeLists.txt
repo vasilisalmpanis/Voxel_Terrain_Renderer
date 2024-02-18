@@ -6,6 +6,7 @@ set(SOURCES
     src/main.cpp
     src/Shader.cpp
     src/Texture.cpp
+    src/Camera.cpp
     glad/glad.c
 )
 

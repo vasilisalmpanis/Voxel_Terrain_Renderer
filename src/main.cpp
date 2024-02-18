@@ -1,4 +1,5 @@
 # include <includes/Texture.hpp>
+# include <includes/Camera.hpp>
 # include <math.h>
 
 /*
@@ -8,16 +9,64 @@
   Return: 	String or Null
 */
 
+int width = 800;
+int height = 800;
+
+float lastX = width / 2.0f, lastY = height / 2.0f;
+
+bool firstMouse = true;
+
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+
+// user speed
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
 void processInput(GLFWwindow* window) {
+	const float cameraSpeed = 3.5f * deltaTime;
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera.ProcessKeyboard(FORWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera.ProcessKeyboard(LEFT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera.ProcessKeyboard(RIGHT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		std::cout << "Escape key pressed" << std::endl;
 		glfwSetWindowShouldClose(window, true);
 	}
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) 
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) 
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 
+// Callback function for window movement
+void mouse_callback(GLFWwindow *window, double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+	camera.ProcessMouseMovement(xpos - lastX, lastY - ypos, firstMouse);
+	lastX = xpos;
+	lastY = ypos;
+}
+
+// Callback function for scrolling
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
+{
+	camera.ProcessMouseScroll(yoffset);
+}
+
 void frameBufferSizeCallback(GLFWwindow *window, int width, int height)
 {
+	
 	glViewport(0, 0, width, height);
 }
 
@@ -39,7 +88,7 @@ int main()
 #endif
 
 	// Create a GLFWwindow object of 800 by 800 pixels, naming it "LearnOpenGL"
-	GLFWwindow* window = glfwCreateWindow(800, 800, "LearnOpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(width, height, "LearnOpenGL", NULL, NULL);
 	
 	// Error check if the window fails to create
 	if (window == NULL) {
@@ -51,6 +100,16 @@ int main()
 	// Introduce the window into the current context
 	glfwMakeContextCurrent(window);
 
+	// Disable curson for window
+	
+
+	// Set callback for mouse movement
+	glfwSetCursorPosCallback(window, mouse_callback);
+
+	// Set callback for scrolling
+	glfwSetScrollCallback(window, scroll_callback);
+
+
 	// Load GLAD so it configures OpenGL
 	
 	if (!gladLoadGL())
@@ -61,7 +120,7 @@ int main()
 	
 	// Specify the viewport of OpenGL in the window
 	// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
-	glViewport(0, 0, 800, 800);
+	glViewport(0, 0, width, height);
 
 	// Create shader program from files
 	// Shader firstProgram("../shaders/default.vert", "../shaders/boxshader.frag");
@@ -170,25 +229,7 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
-	// SECOND PAIR OF VAO AND VBO
-	// GLuint VAO2, VBO2;
 
-	// glGenVertexArrays(1, &VAO2);
-	// glBindVertexArray(VAO2);
-	// glGenBuffers(1, &VBO2);
-	// glBindBuffer(GL_ARRAY_BUFFER, VBO2);
-	// glBufferData(GL_ARRAY_BUFFER, sizeof(triangle2), triangle2, GL_STATIC_DRAW);
-	// glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 *sizeof(float), (void *)0);
-	// // Enable the vertex attribute so that OpenGL knows to use it
-	// glEnableVertexAttribArray(0);
-
-	// glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
-	// glEnableVertexAttribArray(1);
-
-	// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	// Tell glfw that we want to reset the viewport every time a user resizes the window
-	// texture2.bind(1);
 	glUseProgram(secondProgram.getID());
     secondProgram.setInt("texture1", 0);
     secondProgram.setInt("texture2", 1);
@@ -201,6 +242,10 @@ int main()
 	int i = 0;
 	while (!glfwWindowShouldClose(window)) 
 	{
+		// Set the time to the current time
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
 		// Input
 	    processInput(window);
 
@@ -210,14 +255,21 @@ int main()
 		// Clean the back buffer and assign the new color to it
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+
+		glm::mat4 view = camera.GetViewMatrix();
+
+
 		// View matrix
-		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -2.0f));
+		// glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), 
+		// 								glm::vec3(0.0f, 0.0f, 0.0f), 
+		// 								glm::vec3(0.0f, 1.0f, 0.0f));
+		// view = glm::translate(view, glm::vec3(0.0f, 0.0f, 0.0f));
 		// view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
 		// Projection matrix
 		glm::mat4 projection = glm::mat4(1.0f);
-		projection = glm::perspective(glm::radians(100.0f), 800.0f / 800.0f, 0.1f, 100.0f);
+		projection = glm::perspective(glm::radians(ZOOM), (float)width / (float) height, 0.1f, 100.0f);
 
 		// Bind textures
 		texture1.bind(0);
