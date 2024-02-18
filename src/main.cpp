@@ -58,9 +58,15 @@ void processInput(GLFWwindow *window, Shader shader)
 	}
 	const float cameraSpeed = 2.5 * deltaTime;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		cameraPos += cameraSpeed * cameraFront;
+	{
+		cameraPos.x += cameraSpeed * cameraFront.x;
+		cameraPos.z += cameraSpeed * cameraFront.z;
+	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		cameraPos -= cameraSpeed * cameraFront;
+	{
+		cameraPos.x -= cameraSpeed * cameraFront.x;
+		cameraPos.z -= cameraSpeed * cameraFront.z;
+	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) *
 	cameraSpeed;
@@ -115,6 +121,29 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	fov = 1.0f;
 	if (fov > 45.0f)
 	fov = 45.0f;
+}
+
+glm::mat4	myLookAt(
+	glm::highp_vec3 &pos,
+	const glm::highp_vec3 &target,
+	const glm::highp_vec3 &up)
+{
+	glm::vec3 dir = glm::normalize(pos - target);
+	glm::vec3 r = glm::normalize(glm::cross(up, dir));
+    glm::mat4 rotation = glm::mat4(
+        r.x, up.x, dir.x, 0,
+        r.y, up.y, dir.y, 0,
+        r.z, up.z, dir.z, 0,
+        0, 0, 0, 1
+    );
+
+	glm::mat4 translation = glm::mat4(
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        -pos.x, -pos.y, -pos.z, 1
+    );
+	return rotation * translation;
 }
 
 int main()
@@ -298,10 +327,10 @@ int main()
 
         // create transformations
 		glm::mat4 view;
-		view = glm::lookAt(
-			cameraPos,
-			cameraPos + cameraFront,
-			cameraUp);
+		view = myLookAt(
+				cameraPos,
+				cameraPos + cameraFront,
+				cameraUp);
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(fov), 800.0f / 600.0f, 0.1f, 100.0f);
         unsigned int viewLoc  = glGetUniformLocation(shader.ID, "view");
