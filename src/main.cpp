@@ -18,9 +18,28 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 float blendVal = 0.2;
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
+float deltaTime = 0.0f; // Time between current frame and last frame
+
+bool cursorEnabled = false;
 void processInput(GLFWwindow *window, Shader shader)
 {
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS && GLFW_REPEAT != glfwGetKey(window, GLFW_KEY_E))
+	{
+		if (cursorEnabled)
+		{
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			cursorEnabled = false;
+		}
+		else
+		{
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			cursorEnabled = true;
+		}
+	}
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
@@ -37,6 +56,65 @@ void processInput(GLFWwindow *window, Shader shader)
 			blendVal = 0.0;
 		shader.setFloat("mixValue", blendVal);
 	}
+	const float cameraSpeed = 2.5 * deltaTime;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		cameraPos += cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		cameraPos -= cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) *
+	cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) *
+	cameraSpeed;
+}
+
+float lastX = 400, lastY = 300;
+float yaw = -90.0f;
+float pitch = 0.0f;
+bool firstMouse = true;
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (cursorEnabled)
+		return;
+	if (firstMouse) // initially set to true
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed: y ranges bottom to top
+	lastX = xpos;
+	lastY = ypos;
+	const float sensitivity = 0.1f;
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	yaw += xoffset;
+	pitch += yoffset;
+
+	if(pitch > 89.0f)
+		pitch = 89.0f;
+	if(pitch < -89.0f)
+		pitch = -89.0f;
+
+	glm::vec3 direction;
+	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	direction.y = sin(glm::radians(pitch));
+	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	cameraFront = glm::normalize(direction);
+}
+
+float fov = 45.0f;
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	fov -= (float)yoffset;
+	if (fov < 1.0f)
+	fov = 1.0f;
+	if (fov > 45.0f)
+	fov = 45.0f;
 }
 
 int main()
@@ -110,6 +188,9 @@ int main()
 		glfwTerminate();
 		return -1;
 	}
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwMakeContextCurrent(window);
 	if (!gladLoadGL())
@@ -194,6 +275,11 @@ int main()
 	shader.setInt("texture1", 0);
     shader.setInt("texture2", 1);
 
+	float lastFrame = 0.0f; // Time of last frame
+
+	float currentFrame = glfwGetTime();
+	deltaTime = currentFrame - lastFrame;
+	lastFrame = currentFrame;
 	while(!glfwWindowShouldClose(window))
 	{
 		// input
@@ -211,10 +297,13 @@ int main()
         shader.use();
 
         // create transformations
-        glm::mat4 view          = glm::mat4(1.0f);
-        glm::mat4 projection    = glm::mat4(1.0f);
-        view  = glm::translate(view, glm::vec3(-0.0f, 0.0f, -3.0f));
-        projection = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
+		glm::mat4 view;
+		view = glm::lookAt(
+			cameraPos,
+			cameraPos + cameraFront,
+			cameraUp);
+		glm::mat4 projection;
+		projection = glm::perspective(glm::radians(fov), 800.0f / 600.0f, 0.1f, 100.0f);
         unsigned int viewLoc  = glGetUniformLocation(shader.ID, "view");
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
         shader.setMat4("projection", projection);
